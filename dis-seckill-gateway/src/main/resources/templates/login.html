@@ -101,6 +101,7 @@
                 layer.closeAll();
                 if (data.code == 0) {
                     layer.msg("成功");
+                    // console.log(data);
                     window.location.href = "/goods/goodsList";
                 } else {
                     layer.msg(data.msg);

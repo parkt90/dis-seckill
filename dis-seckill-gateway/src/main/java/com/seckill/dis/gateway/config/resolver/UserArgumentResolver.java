@@ -4,6 +4,8 @@ import com.seckill.dis.common.api.cache.RedisServiceApi;
 import com.seckill.dis.common.api.cache.vo.SkUserKeyPrefix;
 import com.seckill.dis.common.api.user.UserServiceApi;
 import com.seckill.dis.common.api.user.vo.UserVo;
+import com.seckill.dis.gateway.config.access.UserContext;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.Reference;
 import org.slf4j.Logger;
@@ -66,6 +68,7 @@ public class UserArgumentResolver implements HandlerMethodArgumentResolver {
                                   ModelAndViewContainer modelAndViewContainer,
                                   NativeWebRequest nativeWebRequest,
                                   WebDataBinderFactory webDataBinderFactory) throws Exception {
+        // return UserContext.getUser()
         // 获取请求和响应对象
         HttpServletRequest request = nativeWebRequest.getNativeRequest(HttpServletRequest.class);
         HttpServletResponse response = nativeWebRequest.getNativeResponse(HttpServletResponse.class);

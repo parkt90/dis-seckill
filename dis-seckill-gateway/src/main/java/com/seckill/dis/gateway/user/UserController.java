@@ -65,7 +65,7 @@ public class UserController {
      */
     @RequestMapping(value = "login", method = RequestMethod.POST)
     @ResponseBody
-    public Result<Boolean> login(HttpServletResponse response, @Valid LoginVo loginVo) {
+    public Result<String> login(HttpServletResponse response, @Valid LoginVo loginVo) {
 
         String token = userService.login(loginVo);
         logger.info("token: " + token);
@@ -76,7 +76,7 @@ public class UserController {
         cookie.setPath("/");
         response.addCookie(cookie);
         // 返回登陆成功
-        return Result.success(true);
+        return Result.success(token);
     }
 
 

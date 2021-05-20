@@ -1,0 +1,4 @@
+com\seckill\dis\mq\receiver\MqConsumer.class
+com\seckill\dis\mq\service\MqProviderImpl.class
+com\seckill\dis\mq\MqApplication.class
+com\seckill\dis\mq\config\MQConfig.class

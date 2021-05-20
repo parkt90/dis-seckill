@@ -34,11 +34,21 @@ public class UserUtil {
 
         // 将用户信息插入数据库，以便在后面模拟用户登录时可以找到该用户，从而可以生成token返会给客户端，然后保存到文件中用于压测
         // 首次生成数据库信息的时候需要调用这个方法，非首次需要注释掉
-        // insertSeckillUserToDB(users);
+        try {
+            insertSeckillUserToDB(users);
+        } catch (ClassNotFoundException e) {
+            // TODO Auto-generated catch block
+            System.out.println("erro1");
+            e.printStackTrace();
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            System.out.println("erro2");
+            e.printStackTrace();
+        }
         // 模拟用户登录，生成token
         System.out.println("start to login...");
-        String urlString = "http://localhost:8080/login/create_token";
-        File file = new File("E:\\JavaProject\\Web\\seckill\\tokens.txt");
+        String urlString = "http://localhost:8082/user/login";
+        File file = new File("E:/tokens.txt");
         if (file.exists()) {
             file.delete();
         }
@@ -57,7 +67,6 @@ public class UserUtil {
             String params = "mobile=" + user.getPhone() + "&password=" + MD5Util.inputPassToFormPass(PASSWORD);
             out.write(params.getBytes());
             out.flush();
-
             // 生成token
             InputStream inputStream = httpURLConnection.getInputStream();
             ByteArrayOutputStream bout = new ByteArrayOutputStream();
@@ -70,6 +79,7 @@ public class UserUtil {
             bout.close();
             String response = new String(bout.toByteArray());
             JSONObject jo = JSON.parseObject(response);
+            // System.out.println(jo);
             String token = jo.getString("data");// data为edu.uestc.controller.result.Result中的字段
             System.out.println("create token : " + user.getPhone());
             // 将token写入文件中，用于压测时模拟客户端登录时发送的token
@@ -112,7 +122,7 @@ public class UserUtil {
     private static void insertSeckillUserToDB(List<SeckillUser> users) throws ClassNotFoundException, SQLException {
         System.out.println("start create user...");
         Connection conn = DBUtil.getConn();
-        String sql = "INSERT INTO miaosha_user(login_count, nickname, register_date, salt, password, id)VALUES(?,?,?,?,?,?)";
+        String sql = "INSERT INTO seckill_user(login_count, nickname, register_date, salt, password, phone)VALUES(?,?,?,?,?,?)";
         PreparedStatement pstmt = conn.prepareStatement(sql);
         for (int i = 0; i < users.size(); i++) {
             SeckillUser user = users.get(i);
@@ -130,7 +140,7 @@ public class UserUtil {
         System.out.println("insert to db done!");
     }
 
-//    public static void main(String[] args) throws IOException {
-//        createUser(5000);
-//    }
+   public static void main(String[] args) throws IOException {
+       createUser(10000);
+   }
 }
