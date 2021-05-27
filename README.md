@@ -6,25 +6,21 @@
 - [模块介绍](#模块介绍)
 - [Q&A](#Q&A)
 - [TODO LIST](#TODO)
-- [参考](#参考)
+- [压测效果](#压测效果)
+- [参考视频](#参考视频)
 
 ## 介绍
 
-本项目为另一个项目[seckill](https://github.com/Grootzz/seckill)的分布式改进版本，dis-seckill意为：distributed seckill，即分布式秒杀系统。
+本项目为另一个项目[dis-seckill](https://github.com/Grootzz/dis-seckill)的分布式改进版本，意为：distributed seckill，即分布式秒杀系统。
 
-商品秒杀与其他业务最大的区别在于：
+项目实现功能包含：
 
-- 低廉价格；
-- 大幅推广；
-- 瞬时售空；
-- 一般是定时上架；
-- 时间短、瞬时并发量高、网络的流量也会瞬间变大。
+- 用户注册和登录模块
+- 商品信息查询模块
+- 用户秒杀模块
+- 订单生成模块
 
-除了具有以上特点，秒杀商品还需要完成正常的电子商务逻辑，即：（1）查询商品；（2）创建订单；（3）扣减库存；（4）更新订单；（5）付款；（6）卖家发货。
-
-本项目正是基于上述业务特点进行设计的，在项目中引入诸多优化手段，使系统可以从容应对秒杀场景下的业务处理。
-
-另外，项目[seckill](https://github.com/Grootzz/seckill)为单体应用，在大并发情形下处理能力有限，所以本项目对其进行分布式改造，对职责进行划分，降低单体应用的业务耦合性。
+本项目采用微服务思想，对职责进行划分，降低单体应用的业务耦合性，每个功能模块可以分开部署，解决系统瓶颈。
 
 ## 快速启动
 
@@ -34,9 +30,13 @@
 
 - 开发环境
 
-  JDK 1.8、Mysql 8.0.12、SpringBoot 2.1.5、zookeeper 3.4.10、dubbo 2.7.1、redis 5.0.5、rabbitmq 3.7.15
+  JDK 1.8、Mysql 8.0.12、SpringBoot 2.1.5、zookeeper 3.4.10、dubbo 2.7.1、redis 5.0.10、rabbitmq 3.8.14
 
-在安装之前，需要安装好上述构建工具和开发环境，推荐在linux下安装上述开发环境。
+- 压力测试
+
+  jmeter 5.4.1。测试文件路径：dis-seckill-common\stress_test\秒杀测试.jmx
+
+在安装之前，需要安装好上述构建工具和开发环境，并开启相应组件后。
 
 **第一步**；完成数据库的初始化，使用`./dis-seckill-common/schema/seckill.sql`初始化数据库。
 
@@ -84,7 +84,7 @@ java -jar dis-seckill-gateway/target/dis-seckill-gateway-0.0.1-SNAPSHOT.jar
 
 > 注：启动服务时最好按上面的顺序启动。
 
-如果将项目导入IDE中进行构建，则分别按上面的顺序启动服务即可。
+如果将项目导入IDE中进行构建，则分别按上面的顺序启动服务即可，如需修改代码，可以用IDE启动项目各模块主程序。
 
 **第三步**；访问项目入口地址
 
@@ -113,27 +113,51 @@ java -jar dis-seckill-gateway/target/dis-seckill-gateway-0.0.1-SNAPSHOT.jar
 
 ## Q&A
 
+- 前端文件资源路径：dis-seckill-gateway\src\main\resources下
 - [前后端交互接口定义](https://github.com/Grootzz/dis-seckill/blob/master/doc/前后端交互接口定义.md)
 - [前后端交互接口逻辑实现](https://github.com/Grootzz/dis-seckill/blob/master/doc/前后端交互接口逻辑实现.md)
 - [Redis中存储的数据](https://github.com/Grootzz/dis-seckill/blob/master/doc/Redis中存储的数据.md)
 - [使用分布式锁解决恶意用户重复注册问题](https://github.com/Grootzz/dis-seckill/blob/master/doc/使用分布式锁解决恶意用户重复注册问题.md)
+- [秒杀接口性能优化思路（](https://github.com/parkt90/dis-seckill/tree/master/doc)近期更新）[](https://github.com/parkt90/dis-seckill/tree/master/doc秒杀接口性能优化.md)
+- [秒杀接口安全优化思路](https://github.com/parkt90/dis-seckill/tree/master/doc)（近期更新）[](https://github.com/parkt90/dis-seckill/tree/master/doc秒杀接口安全性优化.md)
 - ......
 
 ## TODO
 
-- [ ] 引入JWT简化权限验证；
 - [x] 完成用户注册功能；
 - [x] 引入分布式锁保证更改密码接口用户注册接口的幂等性，防止用户恶意访问；
-- [ ] 服务模块横向扩展；
-- [ ] 服务调用的负载均衡与服务降级；
+- [x] 接口压测；
+- [ ] 秒杀接口性能优化,提高单机秒杀接口QPS；
+- [ ] 秒杀接口安全性优化，在前端中隐藏接口地址；
+- [ ] 超高并发下对流量进行降级和限流
 - [ ] gateway模块横向扩展，降低单个应用的压力；
 - [ ] Nginx水平扩展;
-- [ ] 接口压测；
+- [ ] 服务模块横向扩展；
+- [ ] 服务调用的负载均衡与服务降级；
 - [ ] ......
 
-## 参考
+## 压测效果
 
-- <https://blog.csdn.net/gxftry1st/article/details/78560816>
+1. 测试环境：
+   - Intel(R) Core(TM) i5-10210U CPU @ 1.60GHz   2.11 GHz
+   - 内存：16.0 GB（2667MHz）
+   - 环境：windows10				
+2. 优化前：1100Qps左右
 
-- <http://coding.imooc.com/class/168.html>
-- <https://github.com/Grootzz/seckill>
+![](doc\assets\优化前.jpg)
+
+
+
+## 参考视频
+
+- 视频资料（侵删）
+
+  - https://www.bilibili.com/video/BV1Cp4y1b7Je?share_source=copy_web
+  - https://www.bilibili.com/video/BV1Ha4y1e7Uj?share_source=copy_web
+  - https://www.bilibili.com/video/BV1QJ411e78B?share_source=copy_web
+
+- 正版网课链接：
+
+  - http://coding.imooc.com/class/168.html
+
+  
