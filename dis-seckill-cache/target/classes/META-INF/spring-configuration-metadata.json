@@ -15,32 +15,27 @@
     {
       "name": "redis.pool-max-idle",
       "type": "java.lang.Integer",
-      "sourceType": "com.seckill.dis.cache.config.RedisConfig",
-      "defaultValue": 0
+      "sourceType": "com.seckill.dis.cache.config.RedisConfig"
     },
     {
       "name": "redis.pool-max-total",
       "type": "java.lang.Integer",
-      "sourceType": "com.seckill.dis.cache.config.RedisConfig",
-      "defaultValue": 0
+      "sourceType": "com.seckill.dis.cache.config.RedisConfig"
     },
     {
       "name": "redis.pool-max-wait",
       "type": "java.lang.Integer",
-      "sourceType": "com.seckill.dis.cache.config.RedisConfig",
-      "defaultValue": 0
+      "sourceType": "com.seckill.dis.cache.config.RedisConfig"
     },
     {
       "name": "redis.port",
       "type": "java.lang.Integer",
-      "sourceType": "com.seckill.dis.cache.config.RedisConfig",
-      "defaultValue": 0
+      "sourceType": "com.seckill.dis.cache.config.RedisConfig"
     },
     {
       "name": "redis.timeout",
       "type": "java.lang.Integer",
-      "sourceType": "com.seckill.dis.cache.config.RedisConfig",
-      "defaultValue": 0
+      "sourceType": "com.seckill.dis.cache.config.RedisConfig"
     }
   ],
   "hints": []

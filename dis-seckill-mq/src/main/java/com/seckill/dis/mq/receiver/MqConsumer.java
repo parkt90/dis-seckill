@@ -55,16 +55,16 @@ public class MqConsumer {
 
         // 获取商品的库存
         GoodsVo goods = goodsService.getGoodsVoByGoodsId(goodsId);
-        Integer stockCount = goods.getStockCount();
-        if (stockCount <= 0) {
-            return;
-        }
+        // Integer stockCount = goods.getStockCount();
+        // if (stockCount <= 0) {
+        //     return;
+        // }
 
-        // 判断是否已经秒杀到了（保证秒杀接口幂等性）
-        SeckillOrder order = this.getSkOrderByUserIdAndGoodsId(user.getUuid(), goodsId);
-        if (order != null) {
-            return;
-        }
+        // // 判断是否已经秒杀到了（保证秒杀接口幂等性）
+        // SeckillOrder order = this.getSkOrderByUserIdAndGoodsId(user.getUuid(), goodsId);
+        // if (order != null) {
+        //     return;
+        // }
 
         // 1.减库存 2.写入订单 3.写入秒杀订单
         seckillService.seckill(user, goods);

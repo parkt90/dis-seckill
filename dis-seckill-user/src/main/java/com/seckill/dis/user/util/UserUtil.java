@@ -34,7 +34,7 @@ public class UserUtil {
 
         // 将用户信息插入数据库，以便在后面模拟用户登录时可以找到该用户，从而可以生成token返会给客户端，然后保存到文件中用于压测
         // 首次生成数据库信息的时候需要调用这个方法，非首次需要注释掉
-        try {
+       /*  try {
             insertSeckillUserToDB(users);
         } catch (ClassNotFoundException e) {
             // TODO Auto-generated catch block
@@ -44,7 +44,7 @@ public class UserUtil {
             // TODO Auto-generated catch block
             System.out.println("erro2");
             e.printStackTrace();
-        }
+        } */
         // 模拟用户登录，生成token
         System.out.println("start to login...");
         String urlString = "http://localhost:8082/user/login";

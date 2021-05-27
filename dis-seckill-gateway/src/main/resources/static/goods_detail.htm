@@ -53,10 +53,13 @@
             <td>
                 <div class="row">
                     <div class="form-inline">
-                        <img id="verifyCodeImg" width="80" height="32" style="display:none"
+                        <!-- 秒杀接口压力测试时，注释掉：验证码和秒杀地址隐藏 -->
+                        <!-- <img id="verifyCodeImg" width="80" height="32" style="display:none"
                              onclick="refreshVerifyCode()"/>
-                        <input id="verifyCode" class="form-control" style="display:none"/>
-                        <button class="btn btn-primary" type="button" id="buyButton" onclick="getSkPath()">立即秒杀
+                        <input id="verifyCode" class="form-control" style="display:none"/> -->
+                        <!-- <button class="btn btn-primary" type="button" id="buyButton" onclick="getSkPath()">立即秒杀
+                        </button> -->
+                        <button class="btn btn-primary" type="button" id="buyButton" onclick=" doSeckill()">立即秒杀
                         </button>
                     </div>
                 </div>
@@ -106,16 +109,40 @@
         });
     }
 
+    /* 秒杀接口压力测试时，注释掉：验证码和秒杀地址隐藏 */
     /*真正做秒杀的接口, path为服务端返回的秒杀接口地址*/
-    function doSeckill(path) {
+    // function doSeckill(path) {
+    //     $.ajax({
+    //         url: "/seckill/" + path + "/doSeckill",
+    //         type: "POST",
+    //         data: {
+    //             goodsId: $("#goodsId").val()
+    //         },
+    //         success: function (data) {
+    //             if (data.code == 0) {
+    //                 //window.location.href="/order_detail.htm?orderId="+data.data.id;
+    //                 getSkResult($("#goodsId").val());
+    //             } else {
+    //                 layer.msg(data.msg);
+    //             }
+    //         },
+    //         error: function () {
+    //             layer.msg("客户端请求有误");
+    //         }
+    //     });
+    // }
+
+    function doSeckill() {
+        g_showLoading();
         $.ajax({
-            url: "/seckill/" + path + "/doSeckill",
+            url: "/seckill/doSeckill",
             type: "POST",
             data: {
                 goodsId: $("#goodsId").val()
             },
             success: function (data) {
                 if (data.code == 0) {
+                    // console.log(data);
                     //window.location.href="/order_detail.htm?orderId="+data.data.id;
                     getSkResult($("#goodsId").val());
                 } else {
@@ -140,12 +167,13 @@
             success: function (data) {
                 if (data.code == 0) {
                     var result = data.data;
+                    // console.log(data);
                     if (result < 0) {
                         layer.msg("对不起，秒杀失败");
                     } else if (result == 0) {// 继续轮询发送秒杀请求
                         setTimeout(function () {
                             getSkResult(goodsId);
-                        }, 200);// 轮询间隔200ms
+                        }, 500);// 轮询间隔1000ms
                     } else {
                         layer.confirm("恭喜你，秒杀成功！查看订单？", {btn: ["确定", "取消"]},
                             // 确定的回调

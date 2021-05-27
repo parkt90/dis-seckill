@@ -8,7 +8,7 @@ import java.io.Serializable;
 
 public class SkUserKeyPrefix extends BaseKeyPrefix  implements Serializable {
 
-    public static final int TOKEN_EXPIRE = 30*60;// 缓存有效时间为30min
+    public static final int TOKEN_EXPIRE = 60*60;// 缓存有效时间为30min
 
     public SkUserKeyPrefix(int expireSeconds, String prefix) {
         super(expireSeconds, prefix);

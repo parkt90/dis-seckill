@@ -90,6 +90,8 @@ public class UserArgumentResolver implements HandlerMethodArgumentResolver {
 
         // 通过token就可以在redis中查出该token对应的用户对象
         UserVo userVo = redisService.get(SkUserKeyPrefix.TOKEN, token, UserVo.class);
+        logger.info("获取userVo：");
+        if(userVo==null) return null;
         logger.info("获取userVo：" + userVo.toString());
 
         // 在有效期内从redis获取到key之后，需要将key重新设置一下，从而达到延长有效期的效果

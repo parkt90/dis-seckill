@@ -51,3 +51,7 @@ dis-seckill-user/src/test/
 dis-seckill-user/target/
 dis-seckill.iml
 /.vscode
+
+*.gz
+*.tmp
+
