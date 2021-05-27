@@ -144,7 +144,7 @@ java -jar dis-seckill-gateway/target/dis-seckill-gateway-0.0.1-SNAPSHOT.jar
    - 环境：windows10				
 2. 优化前：1100Qps左右
 
-![](doc\assets\优化前.jpg)
+![秒杀压测](doc/assets/优化前.jpg)
 
 
 
