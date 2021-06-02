@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.Map;
 
 
+
 /**
  * 秒杀接口
  *
@@ -45,6 +46,7 @@ import java.util.Map;
 public class SeckillController implements InitializingBean {
 
     private static Logger logger = LoggerFactory.getLogger(SeckillController.class);
+
 
     @Reference(interfaceClass = RedisServiceApi.class)
     RedisServiceApi redisService;
@@ -82,7 +84,7 @@ public class SeckillController implements InitializingBean {
     @ResponseBody
     public Result<String> getSeckillPath(Model model, UserVo user,
                                          @RequestParam("goodsId") long goodsId,
-                                         @RequestParam(value = "verifyCode", defaultValue = "0") int verifyCode) {
+                                         @RequestParam(value = "verifyCode") int verifyCode) {
 
         /** 在执行下面的逻辑之前，会先对path请求进行拦截处理（@AccessLimit， AccessInterceptor），防止访问次数过于频繁，对服务器造成过大的压力 */
 
@@ -200,10 +202,9 @@ public class SeckillController implements InitializingBean {
     public Result<Integer> doSeckill( UserVo user,
                                      @RequestParam("goodsId") long goodsId
                                     ) {
-        if (user == null || goodsId <= 0) {
+        if (user == null) {
             return Result.error(CodeMsg.SESSION_ERROR);
         }
-        // model.addAttribute("user", user);
         if (goodsId <= 0) {
             return Result.error(CodeMsg.SECKILL_PARM_ILLEGAL.fillArgs("商品id小于0"));
         }
@@ -219,7 +220,6 @@ public class SeckillController implements InitializingBean {
             localOverMap.put(goodsId, true);// 秒杀结束。标记该商品已经秒杀结束
             return Result.error(CodeMsg.SECKILL_OVER);
         }
-
         // 判断是否重复秒杀
         //1. 从redis中取缓存，减少数据库的访问
         SeckillOrder order = redisService.get(OrderKeyPrefix.SK_ORDER, ":" + user.getUuid() + "_" + goodsId, SeckillOrder.class);
@@ -254,11 +254,9 @@ public class SeckillController implements InitializingBean {
      */
     @RequestMapping(value = "result", method = RequestMethod.GET)
     @ResponseBody
-    public Result<Long> getSeckillResult(Model model,
+    public Result<Long> getSeckillResult(
                                          UserVo user,
                                          @RequestParam("goodsId") long goodsId) {
-
-        model.addAttribute("user", user);
 
         long result = seckillService.getSeckillResult(user.getUuid(), goodsId);
         return Result.success(result);
@@ -278,8 +276,11 @@ public class SeckillController implements InitializingBean {
     public Result<String> getVerifyCode(HttpServletResponse response, UserVo user,
                                         @RequestParam("goodsId") long goodsId) {
         logger.info("获取验证码");
-        if (user == null || goodsId <= 0) {
+        if (user == null ) {
             return Result.error(CodeMsg.SESSION_ERROR);
+        }
+        if (goodsId <= 0) {
+            return Result.error(CodeMsg.SECKILL_PARM_ILLEGAL.fillArgs("商品id小于0"));
         }
 
         // 刷新验证码的时候置缓存中的随机地址无效
@@ -306,6 +307,21 @@ public class SeckillController implements InitializingBean {
             e.printStackTrace();
             return Result.error(CodeMsg.SECKILL_FAIL);
         }
+    }
+    /**
+     * 调试接口，可以动态加载商品信息到redis缓存中
+     *
+     * @param response
+     * @param user
+     * @param goodsId
+     * @return
+     */
+    @RequestMapping(value = "test", method = RequestMethod.GET)
+    @ResponseBody
+    public Result<Boolean> test() {
+        logger.info("商品信息热加载");
+        afterPropertiesSet();
+        return Result.success(true);     
     }
 
     /**
@@ -382,10 +398,10 @@ public class SeckillController implements InitializingBean {
         if (goods == null) {
             return;
         }
-
         // 将商品的库存信息存储在redis中
         for (GoodsVo good : goods) {
             redisService.set(GoodsKeyPrefix.GOODS_STOCK, "" + good.getId(), good.getStockCount());
+            redisService.set(GoodsKeyPrefix.seckillGoodsInf, ""+ good.getId() , good);
             // 在系统启动时，标记库存不为空
             localOverMap.put(good.getId(), false);
         }

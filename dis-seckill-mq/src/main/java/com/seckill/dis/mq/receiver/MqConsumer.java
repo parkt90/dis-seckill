@@ -1,5 +1,8 @@
 package com.seckill.dis.mq.receiver;
 
+import java.io.IOException;
+
+import com.rabbitmq.client.Channel;
 import com.seckill.dis.common.api.cache.RedisServiceApi;
 import com.seckill.dis.common.api.cache.vo.GoodsKeyPrefix;
 import com.seckill.dis.common.api.cache.vo.OrderKeyPrefix;
@@ -14,6 +17,8 @@ import com.seckill.dis.mq.config.MQConfig;
 import org.apache.dubbo.config.annotation.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.amqp.core.Message;
+import org.springframework.amqp.rabbit.annotation.RabbitHandler;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Service;
 
@@ -46,28 +51,44 @@ public class MqConsumer {
      * @param message
      */
     @RabbitListener(queues = MQConfig.SECKILL_QUEUE)
-    public void receiveSkInfo(SkMessage message) {
+    @RabbitHandler
+    public void receiveSkInfo(SkMessage message, Channel channel, Message mes) throws IOException {
         logger.info("MQ receive a message: " + message);
+        try {
+            channel.basicAck(mes.getMessageProperties().getDeliveryTag(), false);
+          // 获取秒杀用户信息与商品id
+            UserVo user = message.getUser();
+            long goodsId = message.getGoodsId();
 
-        // 获取秒杀用户信息与商品id
-        UserVo user = message.getUser();
-        long goodsId = message.getGoodsId();
+            // 获取商品的库存
+            GoodsVo goods = redisService.get(GoodsKeyPrefix.seckillGoodsInf, ""+goodsId ,GoodsVo.class);
+            // Integer stockCount = goods.getStockCount();
+            // if (stockCount <= 0) {
+            //     return;
+            // }
+            seckillService.seckill(user, goods);
+        } catch (Exception e) {
+            if (mes.getMessageProperties().getRedelivered()) {
+                
+                logger.debug("消息已重复处理失败,拒绝再次接收...");
+                
+                channel.basicReject(mes.getMessageProperties().getDeliveryTag(), false); // 拒绝消息
+            } else {
+                
+                logger.error("消息即将再次返回队列处理...");
+                
+                channel.basicNack(mes.getMessageProperties().getDeliveryTag(), false, true); 
+            }
+        }
 
-        // 获取商品的库存
-        GoodsVo goods = goodsService.getGoodsVoByGoodsId(goodsId);
-        // Integer stockCount = goods.getStockCount();
-        // if (stockCount <= 0) {
-        //     return;
-        // }
+            // // 判断是否已经秒杀到了（保证秒杀接口幂等性）
+            // SeckillOrder order = this.getSkOrderByUserIdAndGoodsId(user.getUuid(), goodsId);
+            // if (order != null) {
+            //     return;
+            // }
 
-        // // 判断是否已经秒杀到了（保证秒杀接口幂等性）
-        // SeckillOrder order = this.getSkOrderByUserIdAndGoodsId(user.getUuid(), goodsId);
-        // if (order != null) {
-        //     return;
-        // }
-
-        // 1.减库存 2.写入订单 3.写入秒杀订单
-        seckillService.seckill(user, goods);
+            // 1.减库存 2.写入订单 3.写入秒杀订单
+        
     }
 
     /**

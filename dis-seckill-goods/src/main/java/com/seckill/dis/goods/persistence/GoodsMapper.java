@@ -41,6 +41,6 @@ public interface GoodsMapper {
      *
      * @param seckillGoods
      */
-    @Update("UPDATE seckill_goods SET stock_count = stock_count-1 WHERE goods_id=#{goodsId} AND stock_count > 0")
+    @Update("UPDATE seckill_goods SET stock_count = stock_count-1 WHERE goods_id=#{goodsId}")
     int reduceStack(SeckillGoods seckillGoods);
 }

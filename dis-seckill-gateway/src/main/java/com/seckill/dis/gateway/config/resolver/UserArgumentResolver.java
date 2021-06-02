@@ -34,8 +34,8 @@ public class UserArgumentResolver implements HandlerMethodArgumentResolver {
     /**
      * 由于需要将一个cookie对应的用户存入第三方缓存中，这里用redis，所以需要引入redis service
      */
-    @Reference(interfaceClass = RedisServiceApi.class)
-    RedisServiceApi redisService;
+    // @Reference(interfaceClass = RedisServiceApi.class)
+    // RedisServiceApi redisService;
 
     /**
      * 当请求参数为 UserVo 时，使用这个解析器处理
@@ -68,9 +68,9 @@ public class UserArgumentResolver implements HandlerMethodArgumentResolver {
                                   ModelAndViewContainer modelAndViewContainer,
                                   NativeWebRequest nativeWebRequest,
                                   WebDataBinderFactory webDataBinderFactory) throws Exception {
-        // return UserContext.getUser()
+        return UserContext.getUser();
         // 获取请求和响应对象
-        HttpServletRequest request = nativeWebRequest.getNativeRequest(HttpServletRequest.class);
+       /*  HttpServletRequest request = nativeWebRequest.getNativeRequest(HttpServletRequest.class);
         HttpServletResponse response = nativeWebRequest.getNativeResponse(HttpServletResponse.class);
         logger.info(request.getRequestURL() + " resolveArgument");
 
@@ -98,47 +98,47 @@ public class UserArgumentResolver implements HandlerMethodArgumentResolver {
         if (userVo != null) {
             addCookie(response, token, userVo);
         }
-        return userVo;
+        return userVo; */
     }
 
-    /**
-     * 根据cookie名获取相应的cookie值
-     *
-     * @param request
-     * @param cookieName
-     * @return
-     */
-    private String getCookieValue(HttpServletRequest request, String cookieName) {
-        logger.info("getCookieValue");
-        Cookie[] cookies = request.getCookies();
-        // null判断，否则并发时会发生异常
-        if (cookies == null || cookies.length == 0) {
-            logger.info("cookies is null");
-            return null;
-        }
+    // /**
+    //  * 根据cookie名获取相应的cookie值
+    //  *
+    //  * @param request
+    //  * @param cookieName
+    //  * @return
+    //  */
+    // private String getCookieValue(HttpServletRequest request, String cookieName) {
+    //     logger.info("getCookieValue");
+    //     Cookie[] cookies = request.getCookies();
+    //     // null判断，否则并发时会发生异常
+    //     if (cookies == null || cookies.length == 0) {
+    //         logger.info("cookies is null");
+    //         return null;
+    //     }
 
-        for (Cookie cookie : cookies) {
-            if (cookie.getName().equals(cookieName)) {
-                return cookie.getValue();
-            }
-        }
-        return null;
-    }
+    //     for (Cookie cookie : cookies) {
+    //         if (cookie.getName().equals(cookieName)) {
+    //             return cookie.getValue();
+    //         }
+    //     }
+    //     return null;
+    // }
 
-    /**
-     * 将cookie存入redis，并将cookie写入到请求的响应中
-     *
-     * @param response
-     * @param token
-     * @param user
-     */
-    private void addCookie(HttpServletResponse response, String token, UserVo user) {
+    // /**
+    //  * 将cookie存入redis，并将cookie写入到请求的响应中
+    //  *
+    //  * @param response
+    //  * @param token
+    //  * @param user
+    //  */
+    // private void addCookie(HttpServletResponse response, String token, UserVo user) {
 
-        redisService.set(SkUserKeyPrefix.TOKEN, token, user);
+    //     redisService.set(SkUserKeyPrefix.TOKEN, token, user);
 
-        Cookie cookie = new Cookie(UserServiceApi.COOKIE_NAME_TOKEN, token);
-        cookie.setMaxAge(SkUserKeyPrefix.TOKEN.expireSeconds());
-        cookie.setPath("/");
-        response.addCookie(cookie);
-    }
+    //     Cookie cookie = new Cookie(UserServiceApi.COOKIE_NAME_TOKEN, token);
+    //     cookie.setMaxAge(SkUserKeyPrefix.TOKEN.expireSeconds());
+    //     cookie.setPath("/");
+    //     response.addCookie(cookie);
+    // }
 }

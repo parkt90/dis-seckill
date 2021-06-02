@@ -28,8 +28,8 @@ public interface OrderMapper {
      * @param orderInfo 订单信息
      * @return 插入成功的订单信息id
      */
-    @Insert("INSERT INTO order_info (user_id, goods_id, goods_name, goods_count, goods_price, order_channel, status, create_date)"
-            + "VALUES (#{userId}, #{goodsId}, #{goodsName}, #{goodsCount}, #{goodsPrice}, #{orderChannel}, #{status}, #{createDate})")
+    @Insert("INSERT INTO order_info (user_id, goods_id, goods_name, goods_count, goods_price, order_channel, status, create_date, delivery_addr_id)"
+            + "VALUES (#{userId}, #{goodsId}, #{goodsName}, #{goodsCount}, #{goodsPrice}, #{orderChannel}, #{status}, #{createDate},#{deliveryAddrId})")
     // 查询出插入订单信息的表id，并返回
     @SelectKey(keyColumn = "id", keyProperty = "id", resultType = long.class, before = false, statement = "SELECT last_insert_id()")
     long insert(OrderInfo orderInfo);
@@ -39,7 +39,7 @@ public interface OrderMapper {
      *
      * @param seckillOrder 秒杀订单
      */
-    @Insert("INSERT INTO seckill_order(user_id, order_id, goods_id) VALUES (#{userId}, #{orderId}, #{goodsId})")
+    @Insert("INSERT IGNORE seckill_order(user_id, order_id, goods_id) VALUES (#{userId}, #{orderId}, #{goodsId})")
     void insertSeckillOrder(SeckillOrder seckillOrder);
 
     /**

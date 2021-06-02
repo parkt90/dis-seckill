@@ -57,3 +57,7 @@ dis-seckill.iml
 
 /*.project
 .settings
+*.project
+*.factorypath
+*.classpath
+*.project

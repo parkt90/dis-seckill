@@ -23,6 +23,8 @@ import javax.script.ScriptEngineManager;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.Random;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 秒杀服务接口实现
@@ -31,6 +33,8 @@ import java.util.Random;
  */
 @Service(interfaceClass = SeckillServiceApi.class)
 public class SeckillServiceImpl implements SeckillServiceApi {
+
+    private static Logger logger = LoggerFactory.getLogger(GoodsServiceImpl.class);
 
     @Autowired
     GoodsServiceApi goodsService;
@@ -70,6 +74,9 @@ public class SeckillServiceImpl implements SeckillServiceApi {
         // // 3. 更新缓存中的库存信息
         // GoodsVo good = goodsService.getGoodsVoByGoodsId(goods.getId());
         // redisService.set(GoodsKeyPrefix.GOODS_STOCK, "" + good.getId(), good.getStockCount());
+       
+        logger.info("订单生成成功");
+        
 
         return order;
     }

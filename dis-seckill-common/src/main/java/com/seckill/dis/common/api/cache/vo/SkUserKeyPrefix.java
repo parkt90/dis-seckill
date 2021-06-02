@@ -8,13 +8,11 @@ import java.io.Serializable;
 
 public class SkUserKeyPrefix extends BaseKeyPrefix  implements Serializable {
 
-    public static final int TOKEN_EXPIRE = 60*60;// 缓存有效时间为30min
+    public static final int TOKEN_EXPIRE = 60*60*24;// 缓存有效时间为30min
 
     public SkUserKeyPrefix(int expireSeconds, String prefix) {
         super(expireSeconds, prefix);
     }
-
-    public static SkUserKeyPrefix token = new SkUserKeyPrefix(TOKEN_EXPIRE, "token");
     /**
      * 用户cookie
      */
@@ -22,7 +20,6 @@ public class SkUserKeyPrefix extends BaseKeyPrefix  implements Serializable {
     /**
      * 用于存储用户对象到redis的key前缀
      */
-    public static SkUserKeyPrefix getSeckillUserById = new SkUserKeyPrefix(0, "id");
     public static SkUserKeyPrefix SK_USER_PHONE = new SkUserKeyPrefix(0, "id");
 
 }

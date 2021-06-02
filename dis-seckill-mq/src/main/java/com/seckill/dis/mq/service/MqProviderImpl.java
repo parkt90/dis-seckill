@@ -53,10 +53,11 @@ public class MqProviderImpl implements MqProviderApi, RabbitTemplate.ConfirmCall
             logger.info("SkMessage 消息消费成功！");
         } else {
             System.out.println("SkMessage 消息消费失败！");
-        }
-
-        if (cause != null) {
             logger.info("CallBackConfirm Cause: " + cause);
         }
+
+        // if (cause != null) {
+        //     logger.info("CallBackConfirm Cause: " + cause);
+        // }
     }
 }
