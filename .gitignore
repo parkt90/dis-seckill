@@ -54,10 +54,8 @@ dis-seckill.iml
 
 *.gz
 *.tmp
-
-/*.project
 .settings
-*.project
 *.factorypath
 *.classpath
 *.project
+target
