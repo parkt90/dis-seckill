@@ -82,13 +82,9 @@ public class OrderServiceImpl implements OrderServiceApi {
         // 将秒杀订单插入 seckill_order 表中
         orderMapper.insertSeckillOrder(seckillOrder);
         logger.debug("将秒杀订单插入 seckill_order 表中");
-
+        
         // 将秒杀订单概要信息存储于redis中
-        try{redisService.set(OrderKeyPrefix.SK_ORDER, ":" + user.getUuid() + "_" + goods.getId(), seckillOrder);}
-        catch(Exception e)
-        {
-            logger.debug("错误信息： "+e);
-        }
+        redisService.set(OrderKeyPrefix.SK_ORDER, ":" + user.getUuid() + "_" + goods.getId(), seckillOrder);
 
         return orderInfo;
     }
