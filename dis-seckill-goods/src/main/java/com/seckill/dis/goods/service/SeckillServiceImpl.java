@@ -58,7 +58,7 @@ public class SeckillServiceImpl implements SeckillServiceApi {
      * @param goods 所秒杀的商品
      * @return
      */
-    @Transactional
+    // @Transactional
     @Override
     public OrderInfo seckill(UserVo user, GoodsVo goods) {
 

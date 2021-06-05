@@ -39,7 +39,7 @@ public interface OrderMapper {
      *
      * @param seckillOrder 秒杀订单
      */
-    @Insert("INSERT IGNORE seckill_order(user_id, order_id, goods_id) VALUES (#{userId}, #{orderId}, #{goodsId})")
+    @Insert("INSERT INTO seckill_order(user_id, order_id, goods_id) VALUES (#{userId}, #{orderId}, #{goodsId})")
     void insertSeckillOrder(SeckillOrder seckillOrder);
 
     /**
