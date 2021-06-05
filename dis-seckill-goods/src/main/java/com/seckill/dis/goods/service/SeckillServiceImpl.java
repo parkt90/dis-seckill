@@ -63,20 +63,11 @@ public class SeckillServiceImpl implements SeckillServiceApi {
     public OrderInfo seckill(UserVo user, GoodsVo goods) {
 
         // 1. 减库存
-        goodsService.reduceStock(goods);
-        // boolean success = goodsService.reduceStock(goods);
-        // if (!success) {
-        //     setGoodsOver(goods.getId());
-        //     return null;
-        // }
+        goodsService.reduceStock(goods.getId());
         // 2. 生成订单；向 order_info 表和 seckill_order 表中写入订单信息
         OrderInfo order = orderService.createOrder(user, goods);
-        // // 3. 更新缓存中的库存信息
-        // GoodsVo good = goodsService.getGoodsVoByGoodsId(goods.getId());
-        // redisService.set(GoodsKeyPrefix.GOODS_STOCK, "" + good.getId(), good.getStockCount());
-       
+
         logger.info("订单生成成功");
-        
 
         return order;
     }

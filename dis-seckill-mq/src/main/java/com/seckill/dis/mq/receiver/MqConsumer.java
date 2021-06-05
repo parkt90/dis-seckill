@@ -5,14 +5,12 @@ import java.io.IOException;
 import com.rabbitmq.client.Channel;
 import com.seckill.dis.common.api.cache.RedisServiceApi;
 import com.seckill.dis.common.api.cache.vo.GoodsKeyPrefix; 
-import com.seckill.dis.common.api.cache.vo.OrderKeyPrefix;
 import com.seckill.dis.common.api.goods.GoodsServiceApi;
 import com.seckill.dis.common.api.goods.vo.GoodsVo;
 import com.seckill.dis.common.api.mq.vo.SkMessage;
-import com.seckill.dis.common.api.order.OrderServiceApi;
 import com.seckill.dis.common.api.seckill.SeckillServiceApi;
 import com.seckill.dis.common.api.user.vo.UserVo;
-import com.seckill.dis.common.domain.SeckillOrder;
+
 import com.seckill.dis.mq.config.MQConfig;
 import org.apache.dubbo.config.annotation.Reference;
 import org.slf4j.Logger;
@@ -36,9 +34,6 @@ public class MqConsumer {
     @Reference(interfaceClass = GoodsServiceApi.class)
     GoodsServiceApi goodsService;
 
-    @Reference(interfaceClass = OrderServiceApi.class)
-    OrderServiceApi orderService;
-
     @Reference(interfaceClass = SeckillServiceApi.class)
     SeckillServiceApi seckillService;
 
@@ -54,6 +49,7 @@ public class MqConsumer {
     @RabbitHandler
     public void receiveSkInfo(SkMessage message, Channel channel, Message mes) throws IOException {
         logger.info("MQ receive a message: " + message);
+         // 1.减库存 2.写入订单 3.写入秒杀订单
         try {
             channel.basicAck(mes.getMessageProperties().getDeliveryTag(), false);
           // 获取秒杀用户信息与商品id
@@ -62,10 +58,7 @@ public class MqConsumer {
 
             // 获取商品的库存
             GoodsVo goods = redisService.get(GoodsKeyPrefix.seckillGoodsInf, ""+goodsId ,GoodsVo.class);
-            // Integer stockCount = goods.getStockCount();
-            // if (stockCount <= 0) {
-            //     return;
-            // }
+        
             seckillService.seckill(user, goods);
         } catch (Exception e) {
             if (mes.getMessageProperties().getRedelivered()) {
@@ -81,33 +74,6 @@ public class MqConsumer {
             }
         }
 
-            // // 判断是否已经秒杀到了（保证秒杀接口幂等性）
-            // SeckillOrder order = this.getSkOrderByUserIdAndGoodsId(user.getUuid(), goodsId);
-            // if (order != null) {
-            //     return;
-            // }
-
-            // 1.减库存 2.写入订单 3.写入秒杀订单
-        
-    }
-
-    /**
-     * 通过用户id与商品id从订单列表中获取订单信息，这个地方用了唯一索引（unique index!!!!!）
-     * <p>
-     * 优化，不同每次都去数据库中读取秒杀订单信息，而是在第一次生成秒杀订单成功后，
-     * 将订单存储在redis中，再次读取订单信息的时候就直接从redis中读取
-     *
-     * @param userId
-     * @param goodsId
-     * @return 秒杀订单信息
-     */
-    private SeckillOrder getSkOrderByUserIdAndGoodsId(Long userId, long goodsId) {
-
-        // 从redis中取缓存，减少数据库的访问
-        SeckillOrder seckillOrder = redisService.get(OrderKeyPrefix.SK_ORDER, ":" + userId + "_" + goodsId, SeckillOrder.class);
-        if (seckillOrder != null) {
-            return seckillOrder;
-        }
-        return orderService.getSeckillOrderByUserIdAndGoodsId(userId, goodsId);
     }
 }
+

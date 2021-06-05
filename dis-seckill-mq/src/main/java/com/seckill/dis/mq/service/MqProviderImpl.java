@@ -56,8 +56,5 @@ public class MqProviderImpl implements MqProviderApi, RabbitTemplate.ConfirmCall
             logger.info("CallBackConfirm Cause: " + cause);
         }
 
-        // if (cause != null) {
-        //     logger.info("CallBackConfirm Cause: " + cause);
-        // }
     }
 }

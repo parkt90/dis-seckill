@@ -37,7 +37,7 @@ public interface GoodsServiceApi {
     /**
      * order表减库存
      *
-     * @param goods
+     * @param goodsId
      */
-    boolean reduceStock(GoodsVo goods);
+    void reduceStock(Long goodsId);
 }
