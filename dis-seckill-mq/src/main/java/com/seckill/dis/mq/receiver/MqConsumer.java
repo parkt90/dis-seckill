@@ -51,7 +51,7 @@ public class MqConsumer {
         logger.info("MQ receive a message: " + message);
          // 1.减库存 2.写入订单 3.写入秒杀订单
         try {
-            channel.basicAck(mes.getMessageProperties().getDeliveryTag(), false);
+            // channel.basicAck(mes.getMessageProperties().getDeliveryTag(), false);
           // 获取秒杀用户信息与商品id
             UserVo user = message.getUser();
             long goodsId = message.getGoodsId();
@@ -60,10 +60,11 @@ public class MqConsumer {
             GoodsVo goods = redisService.get(GoodsKeyPrefix.seckillGoodsInf, ""+goodsId ,GoodsVo.class);
         
             seckillService.seckill(user, goods);
+            channel.basicAck(mes.getMessageProperties().getDeliveryTag(), false);
         } catch (Exception e) {
             if (mes.getMessageProperties().getRedelivered()) {
                 
-                logger.debug("消息已重复处理失败,拒绝再次接收...");
+                logger.debug("消息已重复处理,拒绝再次接收...");
                 
                 channel.basicReject(mes.getMessageProperties().getDeliveryTag(), false); // 拒绝消息
             } else {

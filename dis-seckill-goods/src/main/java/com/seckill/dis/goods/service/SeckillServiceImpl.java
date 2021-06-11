@@ -58,7 +58,7 @@ public class SeckillServiceImpl implements SeckillServiceApi {
      * @param goods 所秒杀的商品
      * @return
      */
-    // @Transactional
+    @Transactional
     @Override
     public OrderInfo seckill(UserVo user, GoodsVo goods) {
 
@@ -67,7 +67,7 @@ public class SeckillServiceImpl implements SeckillServiceApi {
         // 2. 生成订单；向 order_info 表和 seckill_order 表中写入订单信息
         OrderInfo order = orderService.createOrder(user, goods);
 
-        logger.info("订单生成成功");
+        // logger.info("订单生成成功");
 
         return order;
     }

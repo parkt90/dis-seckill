@@ -51,11 +51,11 @@ public class AccessInterceptor extends HandlerInterceptorAdapter {
      */
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        logger.info(request.getRequestURL() + " 拦截请求");
+        // logger.info(request.getRequestURL() + " 拦截请求");
 
         // 指明拦截的是方法
         if (handler instanceof HandlerMethod) {
-            logger.info("HandlerMethod: " + ((HandlerMethod) handler).getMethod().getName());
+            // logger.info("HandlerMethod: " + ((HandlerMethod) handler).getMethod().getName());
             // 获取用户对象
             UserVo user = this.getUser(request, response);
             // 保存用户到ThreadLocal，这样，同一个线程访问的是同一个用户
@@ -129,7 +129,7 @@ public class AccessInterceptor extends HandlerInterceptorAdapter {
      * @return UserVo 对象
      */
     private UserVo getUser(HttpServletRequest request, HttpServletResponse response) {
-        logger.info(request.getRequestURL() + " 获取 UserVo 对象");
+        // logger.info(request.getRequestURL() + " 获取 UserVo 对象");
 
         // 从请求中获取token
         String paramToken = request.getParameter(UserServiceApi.COOKIE_NAME_TOKEN);

@@ -43,7 +43,7 @@
 **第二步**；如果安装了git，则可以采用下面的方式快速启动；
 
 ```properties
-git clone git@github.com:Grootzz/dis-seckill.git
+git clone https://github.com/parkt90/dis-seckill.git
 mvn clean package
 ```
 启动缓存服务：

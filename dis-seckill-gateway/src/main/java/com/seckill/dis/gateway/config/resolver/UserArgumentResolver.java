@@ -48,7 +48,7 @@ public class UserArgumentResolver implements HandlerMethodArgumentResolver {
      */
     @Override
     public boolean supportsParameter(MethodParameter methodParameter) {
-        logger.info("supportsParameter");
+        // logger.info("supportsParameter");
         Class<?> parameterType = methodParameter.getParameterType();
         return parameterType == UserVo.class;
     }
