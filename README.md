@@ -112,7 +112,7 @@ java -jar dis-seckill-gateway/target/dis-seckill-gateway-0.0.1-SNAPSHOT.jar
 
 3. 优化后：1186Qps
 
-   ![](doc\assets\优化后.png)
+   ![秒杀测试](doc/assets/优化后.png)
 
 ## Q&A
 
