@@ -1,6 +1,7 @@
 package com.seckill.dis.order.service;
 
 import com.seckill.dis.common.api.cache.RedisServiceApi;
+import com.seckill.dis.common.api.cache.vo.GoodsKeyPrefix;
 import com.seckill.dis.common.api.cache.vo.OrderKeyPrefix;
 import com.seckill.dis.common.api.goods.vo.GoodsVo;
 import com.seckill.dis.common.api.order.OrderServiceApi;
@@ -51,15 +52,16 @@ public class OrderServiceImpl implements OrderServiceApi {
      * 2. 向 seckill_order 中插入订单概要
      * 两个操作需要构成一个数据库事务
      *
-     * @param user
+     * @param userId
      * @param goods
      * @return
      */
     @Transactional
     @Override
-    public OrderInfo createOrder(UserVo user, GoodsVo goods) {
+    public OrderInfo createOrder(Long userId, Long goodsId) {
         OrderInfo orderInfo = new OrderInfo();
         SeckillOrder seckillOrder = new SeckillOrder();
+        GoodsVo goods = redisService.get(GoodsKeyPrefix.seckillGoodsInf, ""+goodsId ,GoodsVo.class);
 
         orderInfo.setCreateDate(new Date());
         orderInfo.setDeliveryAddrId(0L);
@@ -69,7 +71,7 @@ public class OrderServiceImpl implements OrderServiceApi {
         orderInfo.setGoodsPrice(goods.getSeckillPrice());// 秒杀价格
         orderInfo.setOrderChannel(1);
         orderInfo.setStatus(0);
-        orderInfo.setUserId(user.getUuid());
+        orderInfo.setUserId(userId);
 
         // 将订单信息插入 order_info 表中
         long orderId = orderMapper.insert(orderInfo);
@@ -77,14 +79,14 @@ public class OrderServiceImpl implements OrderServiceApi {
 
         seckillOrder.setGoodsId(goods.getId());
         seckillOrder.setOrderId(orderInfo.getId());
-        seckillOrder.setUserId(user.getUuid());
+        seckillOrder.setUserId(userId);
 
         // 将秒杀订单插入 seckill_order 表中
         orderMapper.insertSeckillOrder(seckillOrder);
         logger.debug("将秒杀订单插入 seckill_order 表中");
         
         // 将秒杀订单概要信息存储于redis中
-        redisService.set(OrderKeyPrefix.SK_ORDER, ":" + user.getUuid() + "_" + goods.getId(), seckillOrder);
+        redisService.set(OrderKeyPrefix.SK_ORDER, ":" + userId + "_" + goods.getId(), seckillOrder);
 
         return orderInfo;
     }

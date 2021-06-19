@@ -50,7 +50,7 @@ public class GoodsServiceImpl implements GoodsServiceApi {
      * @return
      */
     @Override
-    public void reduceStock(Long goodsId) {
+    public void reduceStock(long goodsId) {
       
         // SeckillGoods seckillGoods = new SeckillGoods();
         // 秒杀商品的id和商品的id是一样的

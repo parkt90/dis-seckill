@@ -29,12 +29,12 @@ import org.slf4j.LoggerFactory;
 /**
  * 秒杀服务接口实现
  *
- * @author noodle
+ * @author mata
  */
 @Service(interfaceClass = SeckillServiceApi.class)
 public class SeckillServiceImpl implements SeckillServiceApi {
 
-    private static Logger logger = LoggerFactory.getLogger(GoodsServiceImpl.class);
+    // private static Logger logger = LoggerFactory.getLogger(GoodsServiceImpl.class);
 
     @Autowired
     GoodsServiceApi goodsService;
@@ -54,18 +54,18 @@ public class SeckillServiceImpl implements SeckillServiceApi {
      * 减库存，生成订单，实现秒杀操作核心业务
      * 秒杀操作由两步构成，不可分割，为一个事务
      *
-     * @param user  秒杀商品的用户
+     * @param userID  秒杀商品的用户唯一ID号
      * @param goods 所秒杀的商品
      * @return
      */
     @Transactional
     @Override
-    public OrderInfo seckill(UserVo user, GoodsVo goods) {
+    public OrderInfo seckill(long userId, long goodsId) {
 
         // 1. 减库存
-        goodsService.reduceStock(goods.getId());
+        goodsService.reduceStock(goodsId);
         // 2. 生成订单；向 order_info 表和 seckill_order 表中写入订单信息
-        OrderInfo order = orderService.createOrder(user, goods);
+        OrderInfo order = orderService.createOrder(userId,goodsId);
 
         // logger.info("订单生成成功");
 
@@ -92,6 +92,7 @@ public class SeckillServiceImpl implements SeckillServiceApi {
      * @param goodsId
      * @return
      */
+    @Override
     public long getSeckillResult(Long userId, long goodsId) {
 
         SeckillOrder order = orderService.getSeckillOrderByUserIdAndGoodsId(userId, goodsId);

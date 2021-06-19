@@ -1,6 +1,5 @@
 package com.seckill.dis.common.api.mq.vo;
 
-import com.seckill.dis.common.api.user.vo.UserVo;
 
 import java.io.Serializable;
 
@@ -12,17 +11,15 @@ import java.io.Serializable;
  */
 public class SkMessage implements Serializable{
 
-    private UserVo user;
-
+    private long userID;
     private long goodsId;
 
-
-    public UserVo getUser() {
-        return user;
+    public long getUserID() {
+        return userID;
     }
 
-    public void setUser(UserVo user) {
-        this.user = user;
+    public void setUserID(long userID) {
+        this.userID = userID;
     }
 
     public long getGoodsId() {
@@ -32,12 +29,16 @@ public class SkMessage implements Serializable{
     public void setGoodsId(long goodsId) {
         this.goodsId = goodsId;
     }
+    
+    public SkMessage(long userID, long goodsId) {
+        this.userID = userID;
+        this.goodsId = goodsId;
+    }
 
     @Override
     public String toString() {
-        return "SeckillMessage{" +
-                "user=" + user +
-                ", goodsId=" + goodsId +
-                '}';
+        return "SkMessage [goodsId=" + goodsId + ", userID=" + userID + "]";
     }
+
+  
 }

@@ -39,5 +39,5 @@ public interface GoodsServiceApi {
      *
      * @param goodsId
      */
-    void reduceStock(Long goodsId);
+    void reduceStock(long goodsId);
 }

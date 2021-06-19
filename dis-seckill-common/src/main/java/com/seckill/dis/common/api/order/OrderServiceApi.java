@@ -31,9 +31,9 @@ public interface OrderServiceApi {
     /**
      * 创建订单
      *
-     * @param user
-     * @param goods
+     * @param userId
+     * @param goodsId
      * @return
      */
-    OrderInfo createOrder(UserVo user, GoodsVo goods);
+    OrderInfo createOrder(Long userId, Long goodsdId);
 }

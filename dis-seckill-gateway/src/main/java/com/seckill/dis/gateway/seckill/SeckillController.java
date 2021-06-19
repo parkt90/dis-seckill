@@ -233,10 +233,8 @@ public class SeckillController implements InitializingBean {
         }
 
         // 商品有库存且用户为秒杀商品，则将秒杀请求放入MQ
-        SkMessage message = new SkMessage();
-        message.setUser(user);
-        message.setGoodsId(goodsId);
-
+        SkMessage message = new SkMessage(user.getUuid(),goodsId);
+      
         // 放入MQ(对秒杀请求异步处理，直接返回)
         sender.sendSkMessage(message);
 
@@ -311,9 +309,6 @@ public class SeckillController implements InitializingBean {
     /**
      * 调试接口，可以动态加载商品信息到redis缓存中
      *
-     * @param response
-     * @param user
-     * @param goodsId
      * @return
      */
     @RequestMapping(value = "test", method = RequestMethod.GET)
