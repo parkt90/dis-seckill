@@ -15,13 +15,13 @@
 
 #### 改进点：
 
-- [x] ##### 优化秒杀流程，提高单机系统性能瓶颈。参考[`dis-seckill-test`](https://github.com/parkt90/dis-seckill-test)
+- [x] 优化秒杀流程，提高单机系统性能瓶颈。参考[`dis-seckill-test`](https://github.com/parkt90/dis-seckill-test)
 
-- [x] ##### [接口安全优化](doc/接口安全优化.md)
+- [x] [接口安全优化](doc/接口安全优化.md)
 
-- [x] ##### [系统限流与降级服务](doc/系统限流与降级服务.md)
+- [x] [系统限流与降级服务](doc/系统限流与降级服务.md)
 
-- [x] ##### [`Nginx`水平扩展网关模块与限流配置](doc/系统限流与降级服务.md)
+- [x] [`Nginx`水平扩展网关模块与限流配置](doc/系统限流与降级服务.md)
 
 #### 秒杀系统应具备要求
 
@@ -113,7 +113,7 @@ java -jar dis-seckill-gateway/target/dis-seckill-gateway-0.0.1-SNAPSHOT.jar
 
 
 
-![项目架构图](doc\assets\项目架构图.png)
+![项目架构图](doc/assets/项目架构图.png)
 
 ## 项目入门
 
@@ -137,7 +137,7 @@ java -jar dis-seckill-gateway/target/dis-seckill-gateway-0.0.1-SNAPSHOT.jar
 
 - **秒杀方案介绍**： 
 
- ![设计方案](doc\assets\设计方案图.png)
+ ![设计方案](doc/assets/设计方案图.png)
 
 
 

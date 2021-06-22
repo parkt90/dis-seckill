@@ -136,7 +136,7 @@ limit_conn limit1 10;
 
 用jmeter模拟1000个用户发起秒杀请求。限流效果可以在nginx文件logs/error.log目录下看到：
 
-![nginx限流](assets\nginx限流.png)
+![nginx限流](assets/nginx限流.png)
 
 ## 思考和扩展
 
