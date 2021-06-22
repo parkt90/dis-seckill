@@ -43,16 +43,16 @@ public class UserController {
 //    @Reference(interfaceClass = RedisServiceApi.class)
 //    RedisServiceApi redisService;
 
-    /**
-     * 首页
-     *
-     * @return
-     */
-    @RequestMapping(value = "index", method = RequestMethod.GET)
-    public String index() {
-        logger.info("首页接口");
-        return "login";// login页面
-    }
+    // /**
+    //  * 首页
+    //  *
+    //  * @return
+    //  */
+    // @RequestMapping(value = "index", method = RequestMethod.GET)
+    // public String index() {
+    //     logger.info("首页接口");
+    //     return "login";// login页面
+    // }
 
     /**
      * 用户登录接口
@@ -80,16 +80,16 @@ public class UserController {
     }
 
 
-    // /**
-    //  * 注册跳转
-    //  *
-    //  * @return
-    //  */
-    // @RequestMapping(value = "doRegister", method = RequestMethod.GET)
-    // public String doRegister() {
-    //     logger.info("doRegister()");
-    //     return "register";
-    // }
+    /**
+     * 注册跳转
+     *
+     * @return
+     */
+    @RequestMapping(value = "doRegister", method = RequestMethod.GET)
+    public String doRegister() {
+        logger.info("doRegister()");
+        return "register";
+    }
 
 
     /**

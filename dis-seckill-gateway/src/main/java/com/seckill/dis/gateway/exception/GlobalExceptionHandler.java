@@ -53,8 +53,27 @@ public class GlobalExceptionHandler {
             String message = error.getDefaultMessage();
             // 将错误信息动态地拼接到已定义的部分信息上
             return Result.error(CodeMsg.BIND_ERROR.fillArgs(message));
-        } else {
+        } 
+        // else if (e instanceof BlockException) {
+        //     logger.info("限流");
+        //     BlockException blockException  = (BlockException) e;
+        //     return Result.error(CodeMsg.SERVER_BUSY);
+        // } 
+        else {
             return Result.error(CodeMsg.SERVER_ERROR);
         }
     }
+    
+    //  /**
+    //  * 异常处理
+    //  *
+    //  * @param request 绑定了出现异常的请求信息
+    //  * @param e       该请求所产生的异常
+    //  * @return 向客户端返回的结果（这里为json数据）
+    //  */
+    // @ExceptionHandler(BlockException.class)
+    // public Result<String> sentinelBlockHandler(){
+    //     logger.info("限流");
+    //     return Result.error(CodeMsg.SERVER_BUSY);
+    // }
 }

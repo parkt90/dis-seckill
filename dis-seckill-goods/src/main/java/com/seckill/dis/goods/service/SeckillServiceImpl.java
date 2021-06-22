@@ -3,10 +3,7 @@ package com.seckill.dis.goods.service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.seckill.dis.common.api.cache.RedisServiceApi;
-import com.seckill.dis.common.api.cache.vo.GoodsKeyPrefix;
-import com.seckill.dis.common.api.cache.vo.SkKeyPrefix;
 import com.seckill.dis.common.api.goods.GoodsServiceApi;
-import com.seckill.dis.common.api.goods.vo.GoodsVo;
 import com.seckill.dis.common.api.order.OrderServiceApi;
 import com.seckill.dis.common.api.seckill.SeckillServiceApi;
 import com.seckill.dis.common.api.seckill.vo.VerifyCodeVo;
@@ -72,18 +69,6 @@ public class SeckillServiceImpl implements SeckillServiceApi {
         return order;
     }
 
-    /**
-     * 设置秒杀商品数量为0
-     *
-     * @param goodsId
-     */
-    private void setGoodsOver(long goodsId) {
-        redisService.set(SkKeyPrefix.GOODS_SK_OVER, "" + goodsId, true);
-    }
-
-    private boolean getGoodsOver(long goodsId) {
-        return redisService.exists(SkKeyPrefix.GOODS_SK_OVER, "" + goodsId);
-    }
 
     /**
      * 获取秒杀结果
@@ -98,14 +83,8 @@ public class SeckillServiceImpl implements SeckillServiceApi {
         SeckillOrder order = orderService.getSeckillOrderByUserIdAndGoodsId(userId, goodsId);
         if (order != null) {//秒杀成功
             return order.getOrderId();
-        } else {
-            boolean isOver = getGoodsOver(goodsId);
-            if (isOver) {
-                return -1;
-            } else {
-                return 0;
-            }
-        }
+        } 
+        return -1;       
     }
 
     /**

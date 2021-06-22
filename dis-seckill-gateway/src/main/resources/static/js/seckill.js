@@ -25,38 +25,15 @@
 
 /* 秒杀接口压力测试时，注释掉：验证码和秒杀地址隐藏 */
 /*真正做秒杀的接口, path为服务端返回的秒杀接口地址*/
-// function doSeckill(path) {
-//     $.ajax({
-//         url: "/seckill/" + path + "/doSeckill",
-//         type: "POST",
-//         data: {
-//             goodsId: $("#goodsId").val()
-//         },
-//         success: function (data) {
-//             if (data.code == 0) {
-//                 //window.location.href="/order_detail.htm?orderId="+data.data.id;
-//                 getSkResult($("#goodsId").val());
-//             } else {
-//                 layer.msg(data.msg);
-//             }
-//         },
-//         error: function () {
-//             layer.msg("客户端请求有误");
-//         }
-//     });
-// }
-
-function doSeckill() {
-    g_showLoading();
+function doSeckill(path) {
     $.ajax({
-        url: "/seckill/doSeckill",
+        url: "/seckill/" + path + "/doSeckill",
         type: "POST",
         data: {
             goodsId: $("#goodsId").val()
         },
         success: function (data) {
             if (data.code == 0) {
-                // console.log(data);
                 //window.location.href="/order_detail.htm?orderId="+data.data.id;
                 getSkResult($("#goodsId").val());
             } else {

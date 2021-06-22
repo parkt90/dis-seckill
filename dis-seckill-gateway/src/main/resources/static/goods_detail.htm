@@ -20,7 +20,7 @@
     <!-- md5.js -->
     <script type="text/javascript" src="/js/md5.min.js"></script>
     <!-- common.js -->
-    <script type="text/javascript" src="/js/common.js"></script>
+    <script type="text/javascript" src="/js/common_encode.js"></script>
 </head>
 <body>
 
@@ -54,13 +54,13 @@
                 <div class="row">
                     <div class="form-inline">
                         <!-- 秒杀接口压力测试时，注释掉：验证码和秒杀地址隐藏 -->
-                        <!-- <img id="verifyCodeImg" width="80" height="32" style="display:none"
+                        <img id="verifyCodeImg" width="80" height="32" style="display:none"
                              onclick="refreshVerifyCode()"/>
-                        <input id="verifyCode" class="form-control" style="display:none"/> -->
-                        <!-- <button class="btn btn-primary" type="button" id="buyButton" onclick="getSkPath()">立即秒杀
-                        </button> -->
-                        <button class="btn btn-primary" type="button" id="buyButton" onclick=" doSeckill()">立即秒杀
+                        <input id="verifyCode" class="form-control" style="display:none"/>
+                        <button class="btn btn-primary" type="button" id="buyButton" onclick="getSkPath()">立即秒杀
                         </button>
+                        <!-- <button class="btn btn-primary" type="button" id="buyButton" onclick=" doSeckill()">立即秒杀
+                        </button> -->
                     </div>
                 </div>
                 <input type="hidden" name="goodsId" id="goodsId"/>
@@ -82,5 +82,5 @@
 </div>
 
 </body>
-<script type="text/javascript" src="./js/seckill.js"></script>
+<script type="text/javascript" src="./js/seckill_encode.js"></script>
 </html>

@@ -36,7 +36,7 @@ CREATE TABLE `seckill_user` (
 
 # 插入一条记录（未经过MD5的密码为000000, 两次MD5后的密码为记录中的密码，两次MD5的salt一样）
 INSERT INTO seckill_user (phone, nickname, password, salt)
-VALUES (18342390420, 'Noodle', '5e7b3a9754c2777f96174d4ccb980d23', '1a2b3c4d');
+VALUES (13111897391, 'Noodle', '5e7b3a9754c2777f96174d4ccb980d23', '1a2b3c4d');
 
 
 # ************************************************************************

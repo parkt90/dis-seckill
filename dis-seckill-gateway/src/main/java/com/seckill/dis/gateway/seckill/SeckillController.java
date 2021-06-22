@@ -1,5 +1,6 @@
 package com.seckill.dis.gateway.seckill;
 
+import com.alibaba.csp.sentinel.annotation.SentinelResource;
 import com.seckill.dis.common.api.cache.RedisServiceApi;
 import com.seckill.dis.common.api.cache.vo.GoodsKeyPrefix;
 import com.seckill.dis.common.api.cache.vo.OrderKeyPrefix;
@@ -19,6 +20,8 @@ import com.seckill.dis.common.util.MD5Util;
 import com.seckill.dis.common.util.UUIDUtil;
 import com.seckill.dis.common.util.VerifyCodeUtil;
 import com.seckill.dis.gateway.config.access.AccessLimit;
+import com.seckill.dis.gateway.exception.MyBlockHandler;
+
 import org.apache.dubbo.config.annotation.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +33,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.imageio.ImageIO;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
+
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -73,7 +78,6 @@ public class SeckillController implements InitializingBean {
      * 1. 每一次点击秒杀，都会生成一个随机的秒杀地址返回给客户端
      * 2. 对秒杀的次数做限制（通过自定义拦截器注解完成）
      *
-     * @param model
      * @param user
      * @param goodsId    秒杀的商品id
      * @param verifyCode 验证码
@@ -82,18 +86,20 @@ public class SeckillController implements InitializingBean {
     @AccessLimit(seconds = 5, maxAccessCount = 5, needLogin = true)
     @RequestMapping(value = "path", method = RequestMethod.GET)
     @ResponseBody
-    public Result<String> getSeckillPath(Model model, UserVo user,
+    @SentinelResource(value = "Seckill",blockHandler ="blockHandlerFordoSeckill",blockHandlerClass = {MyBlockHandler.class})
+    public Result<String> getSeckillPath( UserVo user,
                                          @RequestParam("goodsId") long goodsId,
                                          @RequestParam(value = "verifyCode") int verifyCode) {
 
         /** 在执行下面的逻辑之前，会先对path请求进行拦截处理（@AccessLimit， AccessInterceptor），防止访问次数过于频繁，对服务器造成过大的压力 */
 
-        model.addAttribute("user", user);
+        boolean check_goodsID=redisService.exists(GoodsKeyPrefix.seckillGoodsInf, ""+goodsId);
+        if(!check_goodsID) return Result.error(CodeMsg.SECKILL_DOODS_ILLEGAL);
 
-        if (goodsId <= 0) {
-            return Result.error(CodeMsg.SECKILL_PARM_ILLEGAL.fillArgs("商品id小于0"));
+        long  startTime = redisService.get(GoodsKeyPrefix.seckillGoodsInf, ""+goodsId ,GoodsVo.class).getStartDate().getTime();
+        if(startTime >new Date().getTime()){
+            return Result.error(CodeMsg.SECKILL_TIME_ILLEGAL);
         }
-
         // 校验验证码
         boolean check = this.checkVerifyCode(user, goodsId, verifyCode);
 
@@ -108,82 +114,8 @@ public class SeckillController implements InitializingBean {
     }
 
     /* 压力测试时候注释掉 :验证码和秒杀地址隐藏 */
-    // /**
-    //  * 秒杀逻辑（页面静态化分离，不需要直接将页面返回给客户端，而是返回客户端需要的页面动态数据，返回数据时json格式）
-    //  * <p>
-    //  * QPS:1306
-    //  * 5000 * 10
-    //  * <p>
-    //  * GET/POST的@RequestMapping是有区别的
-    //  * <p>
-    //  * 通过随机的path，客户端隐藏秒杀接口
-    //  * <p>
-    //  * 优化: 不同于每次都去数据库中读取秒杀订单信息，而是在第一次生成秒杀订单成功后，
-    //  * 将订单存储在redis中，再次读取订单信息的时候就直接从redis中读取
-    //  *
-    //  * @param model
-    //  * @param user
-    //  * @param goodsId
-    //  * @param path    隐藏的秒杀地址，为客户端回传的path，最初也是有服务端产生的
-    //  * @return 订单详情或错误码
-    //  */
-    // // {path}为客户端回传的path，最初也是有服务端产生的
-    // @RequestMapping(value = "{path}/doSeckill", method = RequestMethod.POST)
-    // @ResponseBody
-    // public Result<Integer> doSeckill(Model model, UserVo user,
-    //                                  @RequestParam("goodsId") long goodsId,
-    //                                  @PathVariable("path") String path) {
-
-    //     model.addAttribute("user", user);
-
-    //     // 验证path是否正确
-    //     boolean check = this.checkPath(user, goodsId, path);
-
-    //     if (!check)
-    //         return Result.error(CodeMsg.REQUEST_ILLEGAL);// 请求非法
-
-    //     // 通过内存标记，减少对redis的访问，秒杀未结束才继续访问redis
-    //     Boolean over = localOverMap.get(goodsId);
-    //     if (over)
-    //         return Result.error(CodeMsg.SECKILL_OVER);
-
-    //     // 预减库存，同时在库存为0时标记该商品已经结束秒杀
-    //     Long stock = redisService.decr(GoodsKeyPrefix.GOODS_STOCK, "" + goodsId);
-    //     if (stock < 0) {
-    //         localOverMap.put(goodsId, true);// 秒杀结束。标记该商品已经秒杀结束
-    //         return Result.error(CodeMsg.SECKILL_OVER);
-    //     }
-
-    //     // 判断是否重复秒杀
-    //     // 从redis中取缓存，减少数据库的访问
-    //     SeckillOrder order = redisService.get(OrderKeyPrefix.SK_ORDER, ":" + user.getUuid() + "_" + goodsId, SeckillOrder.class);
-    //     // 如果缓存中不存该数据，则从数据库中取
-    //     if (order == null) {
-    //         order = orderService.getSeckillOrderByUserIdAndGoodsId(user.getUuid(), goodsId);
-    //     }
-
-    //     if (order != null) {
-    //         return Result.error(CodeMsg.REPEATE_SECKILL);
-    //     }
-
-    //     // 商品有库存且用户为秒杀商品，则将秒杀请求放入MQ
-    //     SkMessage message = new SkMessage();
-    //     message.setUser(user);
-    //     message.setGoodsId(goodsId);
-
-    //     // 放入MQ(对秒杀请求异步处理，直接返回)
-    //     sender.sendSkMessage(message);
-
-    //     // 排队中
-    //     return Result.success(0);
-    // }
-
     /**
      * 秒杀逻辑（页面静态化分离，不需要直接将页面返回给客户端，而是返回客户端需要的页面动态数据，返回数据时json格式）
-     * <p>
-     * QPS:1117
-     * 5000 * 10
-     * <p>
      * GET/POST的@RequestMapping是有区别的
      * <p>
      * 通过随机的path，客户端隐藏秒杀接口
@@ -191,22 +123,26 @@ public class SeckillController implements InitializingBean {
      * 优化: 不同于每次都去数据库中读取秒杀订单信息，而是在第一次生成秒杀订单成功后，
      * 将订单存储在redis中，再次读取订单信息的时候就直接从redis中读取
      *
-     * @param model
      * @param user
      * @param goodsId
+     * @param path    隐藏的秒杀地址，为客户端回传的path，最初也是有服务端产生的
      * @return 订单详情或错误码
      */
-    // 秒杀压力测试时接口
-    @RequestMapping(value = "doSeckill", method = RequestMethod.POST)
+    // {path}为客户端回传的path，最初也是有服务端产生的
+    @RequestMapping(value = "{path}/doSeckill", method = RequestMethod.POST)
     @ResponseBody
     public Result<Integer> doSeckill( UserVo user,
-                                     @RequestParam("goodsId") long goodsId
-                                    ) {
+                                     @RequestParam("goodsId") long goodsId,
+                                     @PathVariable("path") String path) {
+
+        // 验证path是否正确
+        boolean check = this.checkPath(user, goodsId, path);
+
+        if (!check)
+            return Result.error(CodeMsg.REQUEST_ILLEGAL);// 请求非法
+
         if (user == null) {
             return Result.error(CodeMsg.SESSION_ERROR);
-        }
-        if (goodsId <= 0) {
-            return Result.error(CodeMsg.SECKILL_PARM_ILLEGAL.fillArgs("商品id小于0"));
         }
 
         // 通过内存标记，减少对redis的访问，秒杀未结束才继续访问redis
@@ -218,12 +154,14 @@ public class SeckillController implements InitializingBean {
         Long stock = redisService.decr(GoodsKeyPrefix.GOODS_STOCK, "" + goodsId);
         if (stock < 0) {
             localOverMap.put(goodsId, true);// 秒杀结束。标记该商品已经秒杀结束
+            redisService.set(GoodsKeyPrefix.GOODS_STOCK, "" +goodsId, 0);
             return Result.error(CodeMsg.SECKILL_OVER);
         }
+
         // 判断是否重复秒杀
-        //1. 从redis中取缓存，减少数据库的访问
+        // 从redis中取缓存，减少数据库的访问
         SeckillOrder order = redisService.get(OrderKeyPrefix.SK_ORDER, ":" + user.getUuid() + "_" + goodsId, SeckillOrder.class);
-        // 2.如果缓存中不存该数据，则从数据库中取
+        // 如果缓存中不存该数据，则从数据库中取
         if (order == null) {
             order = orderService.getSeckillOrderByUserIdAndGoodsId(user.getUuid(), goodsId);
         }
@@ -234,7 +172,7 @@ public class SeckillController implements InitializingBean {
 
         // 商品有库存且用户为秒杀商品，则将秒杀请求放入MQ
         SkMessage message = new SkMessage(user.getUuid(),goodsId);
-      
+
         // 放入MQ(对秒杀请求异步处理，直接返回)
         sender.sendSkMessage(message);
 
@@ -252,12 +190,15 @@ public class SeckillController implements InitializingBean {
      */
     @RequestMapping(value = "result", method = RequestMethod.GET)
     @ResponseBody
-    public Result<Long> getSeckillResult(
-                                         UserVo user,
+    public Result<Long> getSeckillResult( UserVo user,
                                          @RequestParam("goodsId") long goodsId) {
-
         long result = seckillService.getSeckillResult(user.getUuid(), goodsId);
-        return Result.success(result);
+        if(result!=-1L) return Result.success(result);
+        boolean isOver = localOverMap.get(goodsId);
+        if(!isOver){
+            return Result.success(0L);
+        }
+        return Result.success(-1L);
     }
 
     /**
@@ -271,15 +212,15 @@ public class SeckillController implements InitializingBean {
      */
     @RequestMapping(value = "verifyCode", method = RequestMethod.GET)
     @ResponseBody
+    @SentinelResource(value = "verifyCode",blockHandler ="blockHandlerForVerifyCodel",blockHandlerClass = {MyBlockHandler.class})
     public Result<String> getVerifyCode(HttpServletResponse response, UserVo user,
                                         @RequestParam("goodsId") long goodsId) {
         logger.info("获取验证码");
         if (user == null ) {
             return Result.error(CodeMsg.SESSION_ERROR);
         }
-        if (goodsId <= 0) {
-            return Result.error(CodeMsg.SECKILL_PARM_ILLEGAL.fillArgs("商品id小于0"));
-        }
+        boolean check_goodsID=redisService.exists(GoodsKeyPrefix.seckillGoodsInf, ""+goodsId);
+        if(!check_goodsID) return Result.error(CodeMsg.SECKILL_DOODS_ILLEGAL);
 
         // 刷新验证码的时候置缓存中的随机地址无效
         String path = redisService.get(SkKeyPrefix.SK_PATH, "" + user.getUuid() + "_" + goodsId, String.class);
@@ -328,14 +269,10 @@ public class SeckillController implements InitializingBean {
      * @return
      */
     private boolean checkVerifyCode(UserVo user, long goodsId, int verifyCode) {
-        if (user == null || goodsId <= 0) {
-            return false;
-        }
-
         // 从redis中获取验证码计算结果
         Integer oldCode = redisService.get(SkKeyPrefix.VERIFY_RESULT, user.getUuid() + "_" + goodsId, Integer.class);
-        logger.info(verifyCode+" "+oldCode);
-        if (oldCode == null || oldCode - verifyCode != 0) {// !!!!!!
+        // logger.info(verifyCode+" "+oldCode);
+        if (oldCode == null || oldCode - verifyCode != 0) {
             return false;
         }
 
@@ -352,10 +289,6 @@ public class SeckillController implements InitializingBean {
      * @return
      */
     public String createSkPath(UserVo user, long goodsId) {
-
-        if (user == null || goodsId <= 0) {
-            return null;
-        }
 
         // 随机生成秒杀地址
         String path = MD5Util.md5(UUIDUtil.uuid() + "123456");
@@ -376,10 +309,9 @@ public class SeckillController implements InitializingBean {
         if (user == null || path == null)
             return false;
         // 从redis中读取出秒杀的path变量是否为本次秒杀操作执行前写入redis中的path
-        logger.info(goodsId+"");
+        // logger.info(goodsId+"");
         String oldPath = redisService.get(SkKeyPrefix.SK_PATH, "" + user.getUuid() + "_" + goodsId, String.class);
-        logger.info(oldPath+" "+path);
-
+        // logger.info(oldPath+" "+path);
         return path.equals(oldPath);
     }
 

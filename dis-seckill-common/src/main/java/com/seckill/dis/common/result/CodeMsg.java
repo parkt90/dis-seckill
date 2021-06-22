@@ -36,6 +36,7 @@ public class CodeMsg implements Serializable {
     public static CodeMsg REGISTER_FAIL = new CodeMsg(500218, "注册异常");
     public static CodeMsg FILL_REGISTER_INFO = new CodeMsg(500219, "请填写注册信息");
     public static CodeMsg WAIT_REGISTER_DONE = new CodeMsg(500220, "等待注册完成");
+    public static CodeMsg SERVER_BUSY = new CodeMsg(500105, "服务器繁忙，请稍后！");
 
     //登录模块 5002XX
 
@@ -51,6 +52,8 @@ public class CodeMsg implements Serializable {
     public static CodeMsg REPEATE_SECKILL = new CodeMsg(500501, "不能重复秒杀");
     public static CodeMsg SECKILL_FAIL = new CodeMsg(500502, "秒杀失败");
     public static CodeMsg SECKILL_PARM_ILLEGAL = new CodeMsg(500503, "秒杀请求参数异常：%s");
+    public static CodeMsg SECKILL_TIME_ILLEGAL = new CodeMsg(500504, "非法请求，秒杀还没开始");
+    public static CodeMsg SECKILL_DOODS_ILLEGAL = new CodeMsg(500505, "非法请求，商品ID出错");
 
     /**
      * 构造器定义为private是为了防止controller直接new

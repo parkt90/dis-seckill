@@ -55,7 +55,7 @@ public class AccessInterceptor extends HandlerInterceptorAdapter {
 
         // 指明拦截的是方法
         if (handler instanceof HandlerMethod) {
-            // logger.info("HandlerMethod: " + ((HandlerMethod) handler).getMethod().getName());
+            logger.info("HandlerMethod: " + ((HandlerMethod) handler).getMethod().getName());
             // 获取用户对象
             UserVo user = this.getUser(request, response);
             // 保存用户到ThreadLocal，这样，同一个线程访问的是同一个用户

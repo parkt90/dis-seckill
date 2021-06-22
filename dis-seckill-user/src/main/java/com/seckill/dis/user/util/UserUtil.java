@@ -141,6 +141,6 @@ public class UserUtil {
     }
 
    public static void main(String[] args) throws IOException {
-       createUser(5000);
+       createUser(1000);
    }
 }
