@@ -15,7 +15,7 @@
 
 #### 改进点：
 
-- [x] 优化秒杀流程，提高单机系统性能瓶颈。参考[`dis-seckill-test`](https://github.com/parkt90/dis-seckill-test)
+- [x] 优化秒杀流程，提高单机系统性能瓶颈。[`dis-seckill-test`](https://github.com/parkt90/dis-seckill-test)
 
 - [x] [接口安全优化](doc/接口安全优化.md)
 
@@ -133,7 +133,7 @@ java -jar dis-seckill-gateway/target/dis-seckill-gateway-0.0.1-SNAPSHOT.jar
 
 
 
-<img src="doc\assets\秒杀流程图.png" alt="秒杀流程图"  />
+<img src="doc/assets/秒杀流程图.png" alt="秒杀流程图"  />
 
 - **秒杀方案介绍**： 
 
