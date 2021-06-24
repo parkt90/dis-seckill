@@ -39,20 +39,21 @@
 
 - 开发环境
 
-  |                    🏖                     |                              🧐                               |                              🥇                               |                            🌁                             |                              🌈                               |                              🎯                               |                       🦄                        |                              🏖                               |                      🚏                       |
-  | :--------------------------------------: | :----------------------------------------------------------: | :----------------------------------------------------------: | :------------------------------------------------------: | :----------------------------------------------------------: | :----------------------------------------------------------: | :--------------------------------------------: | :----------------------------------------------------------: | :------------------------------------------: |
-  | [`Java1.8`](https://www.java.com/zh-CN/) | [`SpringBoot 2.1.5`](https://spring.io/projects/spring-boot) | [`MyBatis 2.0.1`](https://mybatis.org/mybatis-3/zh/index.html) | [`Mysql 8.0.12`](https://dev.mysql.com/downloads/mysql/) | [`Dubbo 2.7.1`](https://github.com/zaiyunduan123/Java-Interview/blob/master/notes/framework/Dubbo.md) | [`Zookeeper 3.4.10`](https://github.com/zaiyunduan123/Java-Interview/blob/master/notes/framework/Zookeeper.md) | [`Rabbitmq 3.7.15`](https://www.rabbitmq.com/) | [`Redis  5.0.5`](https://github.com/zaiyunduan123/Java-Interview/blob/master/notes/database/Redis.md) | [`jmeter 5.4.1`](https://jmeter.apache.org/) |
-  |                    🍻                     |                              🚀                               |                              📮                               |                                                          |                                                              |                                                              |                                                |                                                              |                                              |
-  |   [`Nginx`](https://www.nginx.cn/doc/)   |        [`Sentinel`](https://sentinelguard.io/zh-cn/)         |          [`Thymeleaf`](https://www.thymeleaf.org/)           |                                                          |                                                              |                                                              |                                                |                                                              |                                              |
+  |                              🏖                               |                              🌁                               |                              🏖                               |                              🎯                               |                          🦄                          |                                                  |                                              |
+  | :----------------------------------------------------------: | :----------------------------------------------------------: | :----------------------------------------------------------: | :----------------------------------------------------------: | :-------------------------------------------------: | :----------------------------------------------: | :------------------------------------------: |
+  |          [`Java 1.8`](https://www.java.com/zh-CN/)           |   [`Mysql 8.0.12`](https://dev.mysql.com/downloads/mysql/)   | [`Redis 5.0.5`](https://github.com/zaiyunduan123/Java-Interview/blob/master/notes/database/Redis.md) | [`Zookeeper 3.4.10`](https://github.com/zaiyunduan123/Java-Interview/blob/master/notes/framework/Zookeeper.md) |   [`Rabbitmq 3.7.15`](https://www.rabbitmq.com/)    |                                                  |                                              |
+  |                              🧐                               |                              🥇                               |                              🌈                               |                              🍻                               |                          🚀                          |                        📮                         |                      🚏                       |
+  | [`SpringBoot 2.1.5`](https://spring.io/projects/spring-boot) | [`MyBatis 2.0.1`](https://mybatis.org/mybatis-3/zh/index.html) | [`Dubbo 2.7.1`](https://github.com/zaiyunduan123/Java-Interview/blob/master/notes/framework/Dubbo.md) |        [`Nginx   1.20.1`](https://www.nginx.cn/doc/)         | [`Sentinel 1.8.1`](https://sentinelguard.io/zh-cn/) | [`Thymeleaf 3.0.11`](https://www.thymeleaf.org/) | [`jmeter 5.4.1`](https://jmeter.apache.org/) |
 
-在运行秒杀系统之前，需要安装好上述构建工具和开发环境，并开启相应组件后。
+在运行秒杀系统之前，需要**安装表格第一排软件**，并开启相应软件。
 
-修改`mysql`数据库配置，连接、账户和密码。
+准备：修改`mysql`数据库配置，连接、账户和密码。
 
 ```properties
 spring.datasource.url=jdbc:mysql://localhost:3306/seckill?useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true&useSSL=false&serverTimezone=GMT%2B8
 spring.datasource.username=root
 spring.datasource.password=123
+（根据自己数据库配置做相应修改）
 ```
 
 **第一步**；执行`dis-seckill-common/schema/seckill.sql`文件，初始化数据库。
@@ -101,7 +102,7 @@ java -jar dis-seckill-gateway/target/dis-seckill-gateway-0.0.1-SNAPSHOT.jar
 
 > 注：启动服务时最好按上面的顺序启动。
 
-如果将项目导入IDE中进行构建，则分别按上面的顺序启动服务模块主程序即可。
+如果将项目导入`IDE`中进行构建，则分别按上面的顺序启动服务模块主程序即可。
 
 **第三步**；访问项目入口地址
 
