@@ -9,7 +9,7 @@ import com.seckill.dis.common.api.user.vo.UserVo;
  *
  * @author noodle
  */
-public class UserContext {
+public class UserContext  {
 
     // 保存用户的容器
     private static ThreadLocal<UserVo> userHolder = new ThreadLocal<>();
@@ -22,4 +22,10 @@ public class UserContext {
     public static UserVo getUser() {
         return userHolder.get();
     }
+
+    public static void close() throws Exception {
+       userHolder.remove();
+    }
+
+    
 }
