@@ -162,7 +162,7 @@ java -jar dis-seckill-gateway/target/dis-seckill-gateway-0.0.1-SNAPSHOT.jar
 | [使用分布式锁解决恶意用户重复注册问题](doc/使用分布式锁解决恶意用户重复注册问题.md) |
 | [拦截器`HandlerInterceptor`的使用](doc/HandlerInterceptor的使用.md) |
 | **[`Rabbitmq`如何保证消息的可靠投递（近期更新）](doc/Rabbitmq.md)** |
-| **[`redis`和`mysql`如何实现双删一致性（近期更新）](doc/双删一致.md)** |
+| **[`redis`和`mysql`如何实现双删一致性（推荐文章）](https://mp.weixin.qq.com/s/dYvM8_6SQnYRB6KjPsprbw)** |
 | **[限流的的原理和项目中使用(近期更新)](doc/限流原理.md)**    |
 
 ## 参考资料
