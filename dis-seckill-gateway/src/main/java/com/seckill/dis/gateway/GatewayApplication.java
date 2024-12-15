@@ -6,8 +6,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
  * 网关服务
- *
- * @author noodle
+ * test git
+ * @author nood
  */
 @SpringBootApplication
 public class GatewayApplication {
